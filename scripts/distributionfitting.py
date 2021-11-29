@@ -38,20 +38,20 @@ def fit_dist(data, model, print_losses=False,
             print(f'episode {e+1} - SVI: {loss[-1]}')
     return loss
 
-def standardization(data):
+def featurescaling(data):
     """
     standardizes the given dataset
     """
     max_value = data.max()
     min_value = data.min()
-    data_standardized = (data - min_value)/max_value
+    data_standardized = (data - min_value)/(max_value - min_value)
     return data_standardized, max_value, min_value
 
 def rescale(samples, max_value, min_value):
     """
     re-do the standardization
     """
-    samples_rescaled = samples * max_value + min_value
+    samples_rescaled = samples * (max_value - min_value) + min_value
     return samples_rescaled
 
 # the distributions:
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     # generate random test data:
     data = np.random.normal(0,1,size=1000)
     # standardize data:
-    data_standardized, maximum, minimum = standardization(data)    
+    data_standardized, maximum, minimum = featurescaling(data)    
     # fit distribution:
     loss = fit_dist(data_standardized, distribution)
     # sample from distribution:
